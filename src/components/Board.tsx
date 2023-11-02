@@ -55,7 +55,7 @@ const Board = () => {
         }),
       );
     }
-  }, []);
+  }, [cellsDensity, dispatch]);
 
   useEffect(() => {
     const interval = setInterval(() => {
