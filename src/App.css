@@ -1,0 +1,3 @@
+.app-container {
+  grid-template-rows: auto 1fr;
+}
