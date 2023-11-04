@@ -8,6 +8,11 @@ export enum CellState {
   dead = 0,
 }
 
+export type CellPosition = {
+  x: number;
+  y: number;
+};
+
 export type SimulationRules = {
   alive: {
     [neighbours: number]: CellState;

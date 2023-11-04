@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useCanvas from '../hooks/useCanvas';
-import { Board } from '../game-of-life';
+import { Board, CellPosition, CellState } from '../game-of-life';
 
 type CanvasProps = {
   cellsCount: number;
@@ -9,6 +9,7 @@ type CanvasProps = {
   height: number;
   cellSize: number;
   showGrid?: boolean;
+  onClick: (cellCoordinates: CellPosition) => void;
 };
 
 const GRID_LINE_WIDTH = 1;
@@ -21,11 +22,6 @@ type MousePosition = {
   y: number;
 };
 
-type CellPosition = {
-  x: number;
-  y: number;
-};
-
 const mousePositionToCellPosition = (mousePosition: MousePosition, cellSize: number): CellPosition => {
   return {
     x: Math.ceil(mousePosition.x / cellSize) - 1,
@@ -33,7 +29,7 @@ const mousePositionToCellPosition = (mousePosition: MousePosition, cellSize: num
   };
 };
 
-const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true }: CanvasProps) => {
+const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true, onClick }: CanvasProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const drawGrid = (ctx: CanvasRenderingContext2D, cellSize: number, cellCount: number) => {
@@ -81,7 +77,9 @@ const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true }:
 
     Object.keys(cells).forEach((i) => {
       Object.keys(cells[parseInt(i)]).forEach((j) => {
-        drawCell(ctx, cellSize, parseInt(i), parseInt(j));
+        if (cells[parseInt(i)][parseInt(j)] === CellState.alive) {
+          drawCell(ctx, cellSize, parseInt(i), parseInt(j));
+        }
       });
     });
 
@@ -97,6 +95,13 @@ const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true }:
     }
   };
 
+  const handleMouseClick = () => {
+    if (canvasRef.current) {
+      const cellCoordinates = mousePositionToCellPosition(mousePosition, cellSize);
+      onClick(cellCoordinates);
+    }
+  };
+
   const canvasRef = useCanvas(draw) as React.RefObject<HTMLCanvasElement>;
 
   return (
@@ -105,6 +110,7 @@ const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true }:
       className="overflow-auto shadow-lg bg-nord-polar-night-2 rounded cursor-none"
       style={{ width, height }}
       onMouseMove={handleMouseMove}
+      onClick={handleMouseClick}
     />
   );
 };

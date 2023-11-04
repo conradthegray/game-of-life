@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from '../hooks';
 import {
   setBoardSize,
   setBoardState,
+  toggleCell,
   selectBoardState,
   selectBoardSize,
   selectCellDensity,
@@ -11,7 +12,7 @@ import {
 
 import Canvas from './Canvas';
 
-import { generateRandomState, generateNewBoardState, SimulationRules, CellState } from '../game-of-life';
+import { generateRandomState, generateNewBoardState, SimulationRules, CellState, CellPosition } from '../game-of-life';
 
 const Board = () => {
   const dispatch = useAppDispatch();
@@ -80,6 +81,10 @@ const Board = () => {
     return () => clearInterval(interval);
   });
 
+  const handleCanvasClick = (cellCoordinates: CellPosition) => {
+    dispatch(toggleCell(cellCoordinates));
+  };
+
   return (
     <div ref={boardRef} className="flex w-full h-full place-content-center">
       <Canvas
@@ -88,6 +93,7 @@ const Board = () => {
         width={canvasSize.width}
         height={canvasSize.height}
         cellSize={cellSize}
+        onClick={handleCanvasClick}
       />
     </div>
   );
