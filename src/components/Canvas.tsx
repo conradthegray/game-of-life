@@ -15,7 +15,8 @@ type CanvasProps = {
 const GRID_LINE_WIDTH = 1;
 const GRID_LINE_COLOR = '#3B4252';
 const CELL_COLOR = '#5E81AC';
-const HIGHLIGHTED_CELL_COLOR = '#81A1C1';
+const HIGHLIGHTED_EMPTY_CELL_COLOR = '#81A1C1';
+const HIGHLIGHTED_EXISTING_CELL_COLOR = '#BF616A';
 
 type MousePosition = {
   x: number;
@@ -51,7 +52,9 @@ const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true, o
   const drawHighlightedCell = (ctx: CanvasRenderingContext2D, cellSize: number) => {
     const { x: cellX, y: cellY } = mousePositionToCellPosition(mousePosition, cellSize);
 
-    ctx.fillStyle = HIGHLIGHTED_CELL_COLOR;
+    ctx.fillStyle =
+      cells?.[cellX]?.[cellY] === CellState.alive ? HIGHLIGHTED_EXISTING_CELL_COLOR : HIGHLIGHTED_EMPTY_CELL_COLOR;
+
     ctx.fillRect(
       cellX * cellSize + GRID_LINE_WIDTH,
       cellY * cellSize + GRID_LINE_WIDTH,
