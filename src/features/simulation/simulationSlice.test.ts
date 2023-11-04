@@ -1,4 +1,5 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
+import { RootState } from '../../store';
 import reducer, {
   stop,
   play,
@@ -7,6 +8,11 @@ import reducer, {
   setBoardState,
   toggleCell,
   setSimulationSpeed,
+  selectBoardState,
+  selectIsPlaying,
+  selectBoardSize,
+  selectCellDensity,
+  selectSimulationSpeed,
 } from './simulationSlice';
 
 describe('reducers', () => {
@@ -184,5 +190,45 @@ describe('reducers', () => {
         boardSize: { width: 0, height: 0 },
       });
     });
+  });
+});
+
+describe('selectors', () => {
+  let mockState: RootState;
+
+  beforeEach(() => {
+    mockState = {
+      simulation: {
+        isPlaying: true,
+        board: {
+          1: { 1: 1, 2: 1, 3: 1 },
+        },
+        speed: 10,
+        cellDensity: 100,
+        boardSize: { width: 10, height: 20 },
+      },
+    };
+  });
+
+  test('it should select isPlaying', () => {
+    expect(selectIsPlaying(mockState)).toBe(true);
+  });
+
+  test('it should select board state', () => {
+    expect(selectBoardState(mockState)).toEqual({
+      1: { 1: 1, 2: 1, 3: 1 },
+    });
+  });
+
+  test('it should select speed', () => {
+    expect(selectSimulationSpeed(mockState)).toBe(10);
+  });
+
+  test('it should select cell density', () => {
+    expect(selectCellDensity(mockState)).toBe(100);
+  });
+
+  test('it should select board size', () => {
+    expect(selectBoardSize(mockState)).toEqual({ width: 10, height: 20 });
   });
 });
