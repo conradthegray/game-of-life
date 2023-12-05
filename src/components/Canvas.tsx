@@ -32,6 +32,7 @@ const mousePositionToCellPosition = (mousePosition: MousePosition, cellSize: num
 
 const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true, onClick }: CanvasProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [showHighlightedCell, setShowHighlightedCell] = useState(false);
 
   const drawGrid = (ctx: CanvasRenderingContext2D, cellSize: number, cellCount: number) => {
     ctx.beginPath();
@@ -86,7 +87,9 @@ const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true, o
       });
     });
 
-    drawHighlightedCell(ctx, cellSize);
+    if (showHighlightedCell) {
+      drawHighlightedCell(ctx, cellSize);
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -96,6 +99,14 @@ const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true, o
         y: e.clientY - canvasRef.current!.offsetTop,
       });
     }
+  };
+
+  const handleMouseLeave = () => {
+    setShowHighlightedCell(false);
+  };
+
+  const handleMouseEnter = () => {
+    setShowHighlightedCell(true);
   };
 
   const handleMouseClick = () => {
@@ -113,6 +124,8 @@ const Canvas = ({ cellsCount, cells, width, height, cellSize, showGrid = true, o
       className="overflow-auto shadow-lg bg-nord-polar-night-2 rounded cursor-none"
       style={{ width, height }}
       onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
       onClick={handleMouseClick}
     />
   );
