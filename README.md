@@ -14,3 +14,5 @@
 - Vitest
 - React Testing Library
 - GitHub Actions
+- Zod
+- React Hook Form

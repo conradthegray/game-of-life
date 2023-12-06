@@ -8,19 +8,22 @@ import {
   selectBoardSize,
   selectCellDensity,
   selectIsPlaying,
+  selectIsStopped,
 } from '../features/simulation/simulationSlice';
 
 import Canvas from './Canvas';
+import SetupScreen from './SetupScreen';
 
-import { generateRandomState, generateNewBoardState, SimulationRules, CellState, CellPosition } from '../game-of-life';
+import { generateNewBoardState, SimulationRules, CellState, CellPosition } from '../game-of-life';
 
 const Board = () => {
   const dispatch = useAppDispatch();
 
-  const cells = useAppSelector(selectBoardState);
+  const boardState = useAppSelector(selectBoardState);
   const boardSize = useAppSelector(selectBoardSize);
   const cellsDensity = useAppSelector(selectCellDensity);
   const isPlaying = useAppSelector(selectIsPlaying);
+  const isStopped = useAppSelector(selectIsStopped);
 
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [cellSize, setCellSize] = useState(0);
@@ -39,15 +42,6 @@ const Board = () => {
         width: cellsDensity * cellSize,
         height: cellsVerticalNum * cellSize,
       });
-
-      dispatch(
-        setBoardState(
-          generateRandomState(1000, {
-            width: cellsDensity,
-            height: cellsVerticalNum,
-          }),
-        ),
-      );
 
       dispatch(
         setBoardSize({
@@ -74,7 +68,7 @@ const Board = () => {
         },
       };
 
-      const newBoardState = generateNewBoardState(cells, conwayRules, boardSize);
+      const newBoardState = generateNewBoardState(boardState, conwayRules, boardSize);
       dispatch(setBoardState(newBoardState));
     }, 100);
 
@@ -87,14 +81,18 @@ const Board = () => {
 
   return (
     <div ref={boardRef} className="flex w-full h-full place-content-center">
-      <Canvas
-        cellsCount={cellsDensity}
-        cells={cells}
-        width={canvasSize.width}
-        height={canvasSize.height}
-        cellSize={cellSize}
-        onClick={handleCanvasClick}
-      />
+      {isStopped ? (
+        <SetupScreen />
+      ) : (
+        <Canvas
+          cellsCount={cellsDensity}
+          cells={boardState}
+          width={canvasSize.width}
+          height={canvasSize.height}
+          cellSize={cellSize}
+          onClick={handleCanvasClick}
+        />
+      )}
     </div>
   );
 };
